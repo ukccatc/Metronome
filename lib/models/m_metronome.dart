@@ -15,6 +15,69 @@ enum MetronomeState {
   paused,
 }
 
+/// Beat subdivision enumeration
+enum BeatSubdivision {
+  @JsonValue('quarter')
+  quarter, // четвертные ноты
+  @JsonValue('eighth')
+  eighth, // восьмые ноты
+  @JsonValue('triplet')
+  triplet, // триоли
+  @JsonValue('sixteenth')
+  sixteenth, // шестнадцатые ноты
+}
+
+/// Accent pattern model
+@JsonSerializable()
+class AccentPattern {
+  final String name;
+  final List<bool> accents; // true for accented beats
+  final String description;
+
+  const AccentPattern({
+    required this.name,
+    required this.accents,
+    required this.description,
+  });
+
+  /// Create a copy of this pattern with updated values
+  AccentPattern copyWith({
+    String? name,
+    List<bool>? accents,
+    String? description,
+  }) {
+    return AccentPattern(
+      name: name ?? this.name,
+      accents: accents ?? this.accents,
+      description: description ?? this.description,
+    );
+  }
+
+  /// Convert to JSON
+  Map<String, dynamic> toJson() => _$AccentPatternToJson(this);
+
+  /// Create from JSON
+  factory AccentPattern.fromJson(Map<String, dynamic> json) =>
+      _$AccentPatternFromJson(json);
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+    return other is AccentPattern &&
+        other.name == name &&
+        other.accents.toString() == accents.toString() &&
+        other.description == description;
+  }
+
+  @override
+  int get hashCode => Object.hash(name, accents, description);
+
+  @override
+  String toString() {
+    return 'AccentPattern(name: $name, accents: $accents, description: $description)';
+  }
+}
+
 /// Metronome settings model
 @JsonSerializable()
 class MetronomeSettings {
@@ -26,6 +89,8 @@ class MetronomeSettings {
   final bool enableAccent;
   final bool enableVisualFeedback;
   final bool enableHapticFeedback;
+  final BeatSubdivision subdivision;
+  final AccentPattern? accentPattern;
 
   const MetronomeSettings({
     this.bpm = 120,
@@ -36,6 +101,8 @@ class MetronomeSettings {
     this.enableAccent = true,
     this.enableVisualFeedback = true,
     this.enableHapticFeedback = false,
+    this.subdivision = BeatSubdivision.quarter,
+    this.accentPattern,
   });
 
   /// Create a copy of this settings with updated values
@@ -48,6 +115,8 @@ class MetronomeSettings {
     bool? enableAccent,
     bool? enableVisualFeedback,
     bool? enableHapticFeedback,
+    BeatSubdivision? subdivision,
+    AccentPattern? accentPattern,
   }) {
     return MetronomeSettings(
       bpm: bpm ?? this.bpm,
@@ -58,6 +127,8 @@ class MetronomeSettings {
       enableAccent: enableAccent ?? this.enableAccent,
       enableVisualFeedback: enableVisualFeedback ?? this.enableVisualFeedback,
       enableHapticFeedback: enableHapticFeedback ?? this.enableHapticFeedback,
+      subdivision: subdivision ?? this.subdivision,
+      accentPattern: accentPattern ?? this.accentPattern,
     );
   }
 
@@ -79,7 +150,9 @@ class MetronomeSettings {
         other.accentSound == accentSound &&
         other.enableAccent == enableAccent &&
         other.enableVisualFeedback == enableVisualFeedback &&
-        other.enableHapticFeedback == enableHapticFeedback;
+        other.enableHapticFeedback == enableHapticFeedback &&
+        other.subdivision == subdivision &&
+        other.accentPattern == accentPattern;
   }
 
   @override
@@ -93,12 +166,14 @@ class MetronomeSettings {
       enableAccent,
       enableVisualFeedback,
       enableHapticFeedback,
+      subdivision,
+      accentPattern,
     );
   }
 
   @override
   String toString() {
-    return 'MetronomeSettings(bpm: $bpm, timeSignature: $timeSignature, volume: $volume, tickSound: $tickSound, accentSound: $accentSound, enableAccent: $enableAccent, enableVisualFeedback: $enableVisualFeedback, enableHapticFeedback: $enableHapticFeedback)';
+    return 'MetronomeSettings(bpm: $bpm, timeSignature: $timeSignature, volume: $volume, tickSound: $tickSound, accentSound: $accentSound, enableAccent: $enableAccent, enableVisualFeedback: $enableVisualFeedback, enableHapticFeedback: $enableHapticFeedback, subdivision: $subdivision, accentPattern: $accentPattern)';
   }
 }
 
@@ -183,10 +258,7 @@ class MetronomeModel {
   final MetronomeSettings settings;
   final MetronomeStateModel state;
 
-  const MetronomeModel({
-    required this.settings,
-    required this.state,
-  });
+  const MetronomeModel({required this.settings, required this.state});
 
   /// Create a copy of this model with updated values
   MetronomeModel copyWith({

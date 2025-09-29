@@ -6,6 +6,22 @@ part of 'm_metronome.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
+AccentPattern _$AccentPatternFromJson(Map<String, dynamic> json) =>
+    AccentPattern(
+      name: json['name'] as String,
+      accents: (json['accents'] as List<dynamic>)
+          .map((e) => e as bool)
+          .toList(),
+      description: json['description'] as String,
+    );
+
+Map<String, dynamic> _$AccentPatternToJson(AccentPattern instance) =>
+    <String, dynamic>{
+      'name': instance.name,
+      'accents': instance.accents,
+      'description': instance.description,
+    };
+
 MetronomeSettings _$MetronomeSettingsFromJson(Map<String, dynamic> json) =>
     MetronomeSettings(
       bpm: (json['bpm'] as num?)?.toInt() ?? 120,
@@ -16,6 +32,14 @@ MetronomeSettings _$MetronomeSettingsFromJson(Map<String, dynamic> json) =>
       enableAccent: json['enableAccent'] as bool? ?? true,
       enableVisualFeedback: json['enableVisualFeedback'] as bool? ?? true,
       enableHapticFeedback: json['enableHapticFeedback'] as bool? ?? false,
+      subdivision:
+          $enumDecodeNullable(_$BeatSubdivisionEnumMap, json['subdivision']) ??
+          BeatSubdivision.quarter,
+      accentPattern: json['accentPattern'] == null
+          ? null
+          : AccentPattern.fromJson(
+              json['accentPattern'] as Map<String, dynamic>,
+            ),
     );
 
 Map<String, dynamic> _$MetronomeSettingsToJson(MetronomeSettings instance) =>
@@ -28,7 +52,16 @@ Map<String, dynamic> _$MetronomeSettingsToJson(MetronomeSettings instance) =>
       'enableAccent': instance.enableAccent,
       'enableVisualFeedback': instance.enableVisualFeedback,
       'enableHapticFeedback': instance.enableHapticFeedback,
+      'subdivision': _$BeatSubdivisionEnumMap[instance.subdivision]!,
+      'accentPattern': instance.accentPattern,
     };
+
+const _$BeatSubdivisionEnumMap = {
+  BeatSubdivision.quarter: 'quarter',
+  BeatSubdivision.eighth: 'eighth',
+  BeatSubdivision.triplet: 'triplet',
+  BeatSubdivision.sixteenth: 'sixteenth',
+};
 
 MetronomeStateModel _$MetronomeStateModelFromJson(Map<String, dynamic> json) =>
     MetronomeStateModel(

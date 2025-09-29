@@ -51,7 +51,7 @@ class BpmDisplay extends StatelessWidget {
                     vertical: kDefaultSpacing,
                   ),
                   decoration: BoxDecoration(
-                    color: AppColors.primary.withOpacity(0.1),
+                    color: AppColors.primary.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(kDefaultBorderRadius),
                   ),
                   child: Text(
@@ -80,7 +80,7 @@ class BpmDisplay extends StatelessWidget {
                   ? (value) => onBpmChanged(value.round())
                   : null,
               activeColor: AppColors.primary,
-              inactiveColor: AppColors.primary.withOpacity(0.3),
+              inactiveColor: AppColors.primary.withValues(alpha: 0.3),
             ),
           ],
         ),
@@ -97,9 +97,9 @@ class BpmDisplay extends StatelessWidget {
       height: 40,
       decoration: BoxDecoration(
         shape: BoxShape.circle,
-        color: onPressed != null 
-            ? AppColors.primary 
-            : AppColors.primary.withOpacity(0.3),
+        color: onPressed != null
+            ? AppColors.primary
+            : AppColors.primary.withValues(alpha: 0.3),
       ),
       child: Material(
         color: Colors.transparent,
@@ -108,8 +108,8 @@ class BpmDisplay extends StatelessWidget {
           onTap: onPressed,
           child: Icon(
             icon,
-            color: onPressed != null 
-                ? AppColors.textOnPrimary 
+            color: onPressed != null
+                ? AppColors.textOnPrimary
                 : AppColors.textSecondary,
             size: 20,
           ),

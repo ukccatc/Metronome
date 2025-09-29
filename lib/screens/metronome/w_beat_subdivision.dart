@@ -1,23 +1,22 @@
-/// Time signature selector widget
-/// This widget allows users to select the time signature
+/// Beat subdivision selector widget
+/// Allows users to select beat subdivisions (quarter, eighth, triplet, sixteenth)
 
 import 'package:flutter/material.dart';
 import '../../constants/theme.dart';
 import '../../constants/text_styles.dart';
 import '../../constants/constants.dart';
+import '../../models/m_metronome.dart';
 
-class TimeSignatureSelector extends StatelessWidget {
-  final int selectedSignature;
-  final Function(int) onSignatureChanged;
+class BeatSubdivisionSelector extends StatelessWidget {
+  final BeatSubdivision selectedSubdivision;
+  final Function(BeatSubdivision) onSubdivisionChanged;
   final bool isEnabled;
-  final List<int> availableSignatures;
 
-  const TimeSignatureSelector({
+  const BeatSubdivisionSelector({
     super.key,
-    required this.selectedSignature,
-    required this.onSignatureChanged,
+    required this.selectedSubdivision,
+    required this.onSubdivisionChanged,
     this.isEnabled = true,
-    this.availableSignatures = const [2, 3, 4, 5, 6, 7, 8],
   });
 
   @override
@@ -33,7 +32,7 @@ class TimeSignatureSelector extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'Time Signature',
+              'Beat Subdivision',
               style: AppTextStyles.labelLarge.copyWith(
                 color: AppColors.textSecondary,
               ),
@@ -42,8 +41,8 @@ class TimeSignatureSelector extends StatelessWidget {
             Wrap(
               spacing: kDefaultSpacing,
               runSpacing: kDefaultSpacing,
-              children: availableSignatures.map((signature) {
-                return _buildSignatureChip(signature);
+              children: BeatSubdivision.values.map((subdivision) {
+                return _buildSubdivisionChip(subdivision);
               }).toList(),
             ),
           ],
@@ -52,12 +51,12 @@ class TimeSignatureSelector extends StatelessWidget {
     );
   }
 
-  Widget _buildSignatureChip(int signature) {
-    final isSelected = signature == selectedSignature;
+  Widget _buildSubdivisionChip(BeatSubdivision subdivision) {
+    final isSelected = subdivision == selectedSubdivision;
 
     return ChoiceChip(
       label: Text(
-        '$signature/4',
+        _getSubdivisionLabel(subdivision),
         style: AppTextStyles.labelMedium.copyWith(
           color: isSelected ? AppColors.textOnPrimary : AppColors.textPrimary,
         ),
@@ -66,22 +65,35 @@ class TimeSignatureSelector extends StatelessWidget {
       onSelected: isEnabled
           ? (selected) {
               if (selected) {
-                onSignatureChanged(signature);
+                onSubdivisionChanged(subdivision);
               }
             }
           : null,
       selectedColor: AppColors.primary,
       backgroundColor: AppColors.surface,
-      disabledColor: AppColors.surface.withValues(alpha: 0.5),
+      disabledColor: AppColors.surface.withOpacity(0.5),
       side: BorderSide(
         color: isSelected
             ? AppColors.primary
-            : AppColors.primary.withValues(alpha: 0.3),
+            : AppColors.primary.withOpacity(0.3),
         width: 1,
       ),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(kDefaultBorderRadius),
       ),
     );
+  }
+
+  String _getSubdivisionLabel(BeatSubdivision subdivision) {
+    switch (subdivision) {
+      case BeatSubdivision.quarter:
+        return '1/4';
+      case BeatSubdivision.eighth:
+        return '1/8';
+      case BeatSubdivision.triplet:
+        return '1/3';
+      case BeatSubdivision.sixteenth:
+        return '1/16';
+    }
   }
 }

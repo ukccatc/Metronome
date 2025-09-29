@@ -31,7 +31,7 @@ class MetronomeControls extends StatelessWidget {
           onPressed: isInitialized ? onStop : null,
           isActive: false,
         ),
-        
+
         // Play/Pause button
         _buildControlButton(
           icon: isPlaying ? Icons.pause : Icons.play_arrow,
@@ -56,14 +56,14 @@ class MetronomeControls extends StatelessWidget {
       height: isPrimary ? 80 : 60,
       decoration: BoxDecoration(
         shape: BoxShape.circle,
-        color: isActive 
-            ? AppColors.metronomeActive 
+        color: isActive
+            ? AppColors.metronomeActive
             : AppColors.metronomeInactive,
         boxShadow: [
           BoxShadow(
-            color: isActive 
-                ? AppColors.metronomeActive.withOpacity(0.3)
-                : AppColors.metronomeInactive.withOpacity(0.3),
+            color: isActive
+                ? AppColors.metronomeActive.withValues(alpha: 0.3)
+                : AppColors.metronomeInactive.withValues(alpha: 0.3),
             blurRadius: 8,
             offset: const Offset(0, 4),
           ),
@@ -73,7 +73,10 @@ class MetronomeControls extends StatelessWidget {
         color: Colors.transparent,
         child: InkWell(
           borderRadius: BorderRadius.circular(isPrimary ? 40 : 30),
-          onTap: onPressed,
+          onTap: () {
+            debugPrint('Button tapped. onPressed: ${onPressed != null}');
+            onPressed?.call();
+          },
           child: Center(
             child: isLoading
                 ? SizedBox(
@@ -82,14 +85,18 @@ class MetronomeControls extends StatelessWidget {
                     child: CircularProgressIndicator(
                       strokeWidth: 2,
                       valueColor: AlwaysStoppedAnimation<Color>(
-                        isActive ? AppColors.textOnPrimary : AppColors.textPrimary,
+                        isActive
+                            ? AppColors.textOnPrimary
+                            : AppColors.textPrimary,
                       ),
                     ),
                   )
                 : Icon(
                     icon,
                     size: isPrimary ? 32 : 24,
-                    color: isActive ? AppColors.textOnPrimary : AppColors.textPrimary,
+                    color: isActive
+                        ? AppColors.textOnPrimary
+                        : AppColors.textPrimary,
                   ),
           ),
         ),

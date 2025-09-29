@@ -1,44 +1,31 @@
-/// Audio service for metronome functionality
-/// This service handles audio playback and metronome timing
-
 import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:metronome/metronome.dart';
-import 'package:audioplayers/audioplayers.dart';
 import '../models/m_metronome.dart';
-import '../constants/constants.dart';
 
-/// Audio service class for metronome functionality
+/// Simple audio service using only the metronome package
 class AudioService {
-  // Core metronome instance
   final Metronome _metronome = Metronome();
-  final AudioPlayer _audioPlayer = AudioPlayer();
-  
-  // State management
-  final StreamController<MetronomeStateModel> _stateController = 
-      StreamController<MetronomeStateModel>.broadcast();
-  final StreamController<int> _tickController = 
-      StreamController<int>.broadcast();
-  
-  // Current state
-  MetronomeSettings _settings = const MetronomeSettings();
-  MetronomeStateModel _currentState = const MetronomeStateModel();
-  Timer? _fallbackTimer;
+  MetronomeSettings? _settings;
   bool _isInitialized = false;
-  bool _useFallback = false;
-  
+
+  // State management
+  MetronomeStateModel _currentState = const MetronomeStateModel();
+  final StreamController<MetronomeStateModel> _stateController =
+      StreamController.broadcast();
+  final StreamController<int> _tickController = StreamController.broadcast();
+
   // Streams
   Stream<MetronomeStateModel> get stateStream => _stateController.stream;
   Stream<int> get tickStream => _tickController.stream;
-  
+
   /// Initialize the audio service
   Future<void> initialize(MetronomeSettings settings) async {
+    debugPrint('AudioService.initialize() called with settings: $settings');
     _settings = settings;
-    
+
     try {
-      debugPrint('Initializing audio service...');
-      
-      // Try to initialize the native metronome
+      debugPrint('Calling _metronome.init()...');
       await _metronome.init(
         'assets/audio/${settings.tickSound}',
         accentedPath: 'assets/audio/${settings.accentSound}',
@@ -46,202 +33,126 @@ class AudioService {
         volume: (settings.volume * 100).toInt(),
         enableTickCallback: true,
         timeSignature: settings.timeSignature,
-        sampleRate: kSampleRate,
       );
-      
-      // Listen to tick stream
+      debugPrint('_metronome.init() completed successfully');
+
       _metronome.tickStream.listen((int tick) {
-        _onTickReceived(tick);
+        debugPrint('Tick received: $tick');
+        _updateState(_currentState.copyWith(currentTick: tick));
+        _tickController.add(tick);
       });
-      
+
       _isInitialized = true;
-      _useFallback = false;
-      
-      _updateState(_currentState.copyWith(
-        isInitialized: true,
-        useFallback: false,
-        lastUpdated: DateTime.now(),
-      ));
-      
-      debugPrint('Audio service initialized successfully');
+      _updateState(_currentState.copyWith(isInitialized: true));
+
+      debugPrint(
+        'Metronome initialized successfully, isInitialized: $_isInitialized',
+      );
     } catch (e) {
       debugPrint('Error initializing metronome: $e');
-      debugPrint('Switching to fallback audio system...');
-      
-      _isInitialized = true;
-      _useFallback = true;
-      
-      _updateState(_currentState.copyWith(
-        isInitialized: true,
-        useFallback: true,
-        errorMessage: 'Using fallback audio system',
-        lastUpdated: DateTime.now(),
-      ));
+      _isInitialized = false;
     }
   }
-  
+
   /// Start the metronome
   Future<void> start() async {
+    debugPrint('AudioService.start() called, isInitialized: $_isInitialized');
+
     if (!_isInitialized) {
-      throw Exception('Audio service not initialized');
+      debugPrint('Metronome not initialized, cannot start');
+      return;
     }
-    
+
     try {
-      if (_useFallback) {
-        _startFallbackMetronome();
-      } else {
-        await _metronome.play();
-      }
-      
-      _updateState(_currentState.copyWith(
-        state: MetronomeState.playing,
-        lastUpdated: DateTime.now(),
-      ));
+      debugPrint('Calling _metronome.play()...');
+      await _metronome.play();
+      debugPrint('_metronome.play() completed successfully');
+      _updateState(_currentState.copyWith(state: MetronomeState.playing));
     } catch (e) {
-      _updateState(_currentState.copyWith(
-        errorMessage: 'Failed to start metronome: $e',
-        lastUpdated: DateTime.now(),
-      ));
-      rethrow;
+      debugPrint('Error starting metronome: $e');
     }
   }
-  
+
   /// Pause the metronome
   Future<void> pause() async {
     if (!_isInitialized) return;
-    
+
     try {
-      if (_useFallback) {
-        _fallbackTimer?.cancel();
-      } else {
-        await _metronome.pause();
-      }
-      
-      _updateState(_currentState.copyWith(
-        state: MetronomeState.paused,
-        lastUpdated: DateTime.now(),
-      ));
+      await _metronome.pause();
+      _updateState(_currentState.copyWith(state: MetronomeState.paused));
     } catch (e) {
-      _updateState(_currentState.copyWith(
-        errorMessage: 'Failed to pause metronome: $e',
-        lastUpdated: DateTime.now(),
-      ));
-      rethrow;
+      debugPrint('Error pausing metronome: $e');
     }
   }
-  
+
   /// Stop the metronome
   Future<void> stop() async {
     if (!_isInitialized) return;
-    
+
     try {
-      if (_useFallback) {
-        _fallbackTimer?.cancel();
-      } else {
-        await _metronome.stop();
-      }
-      
-      _updateState(_currentState.copyWith(
-        state: MetronomeState.stopped,
-        currentTick: 0,
-        lastUpdated: DateTime.now(),
-      ));
+      await _metronome.stop();
+      _updateState(
+        _currentState.copyWith(state: MetronomeState.stopped, currentTick: 0),
+      );
     } catch (e) {
-      _updateState(_currentState.copyWith(
-        errorMessage: 'Failed to stop metronome: $e',
-        lastUpdated: DateTime.now(),
-      ));
-      rethrow;
+      debugPrint('Error stopping metronome: $e');
     }
   }
-  
+
   /// Update BPM
-  Future<void> updateBpm(int bpm) async {
-    _settings = _settings.copyWith(bpm: bpm);
-    
-    if (_isInitialized) {
-      if (_useFallback) {
-        // Restart fallback timer with new BPM
-        if (_currentState.state == MetronomeState.playing) {
-          _fallbackTimer?.cancel();
-          _startFallbackMetronome();
-        }
-      } else {
-        _metronome.setBPM(bpm);
-      }
+  Future<void> setBpm(int bpm) async {
+    if (!_isInitialized || _settings == null) return;
+
+    _settings = _settings!.copyWith(bpm: bpm);
+
+    try {
+      await _metronome.setBPM(bpm);
+    } catch (e) {
+      debugPrint('Error setting BPM: $e');
     }
   }
-  
-  /// Update time signature
-  Future<void> updateTimeSignature(int timeSignature) async {
-    _settings = _settings.copyWith(timeSignature: timeSignature);
-    
-    if (_isInitialized && _useFallback) {
-      // Restart fallback timer with new time signature
-      if (_currentState.state == MetronomeState.playing) {
-        _fallbackTimer?.cancel();
-        _startFallbackMetronome();
-      }
-    }
-  }
-  
+
   /// Update volume
-  Future<void> updateVolume(double volume) async {
-    _settings = _settings.copyWith(volume: volume);
-    
-    if (_isInitialized && !_useFallback) {
-      _metronome.setVolume((volume * 100).toInt());
+  Future<void> setVolume(double volume) async {
+    if (!_isInitialized || _settings == null) return;
+
+    _settings = _settings!.copyWith(volume: volume);
+
+    try {
+      await _metronome.setVolume((volume * 100).toInt());
+    } catch (e) {
+      debugPrint('Error setting volume: $e');
     }
   }
-  
-  /// Start fallback metronome using Timer
-  void _startFallbackMetronome() {
-    debugPrint('Starting fallback metronome at ${_settings.bpm} BPM');
-    final interval = Duration(milliseconds: (60000 / _settings.bpm).round());
-    
-    _fallbackTimer = Timer.periodic(interval, (timer) {
-      final newTick = (_currentState.currentTick % _settings.timeSignature) + 1;
-      
-      _updateState(_currentState.copyWith(
-        currentTick: newTick,
-        lastUpdated: DateTime.now(),
-      ));
-      
-      _tickController.add(newTick);
-      
-      // Play different sounds for beat 1 vs other beats
-      if (newTick == 1) {
-        _audioPlayer.play(AssetSource('audio/${_settings.accentSound}'));
-      } else {
-        _audioPlayer.play(AssetSource('audio/${_settings.tickSound}'));
-      }
-      
-      debugPrint('Fallback tick: $newTick');
-    });
+
+  /// Update time signature
+  Future<void> setTimeSignature(int timeSignature) async {
+    if (!_isInitialized || _settings == null) return;
+
+    _settings = _settings!.copyWith(timeSignature: timeSignature);
+
+    try {
+      await _metronome.setTimeSignature(timeSignature);
+    } catch (e) {
+      debugPrint('Error setting time signature: $e');
+    }
   }
-  
-  /// Handle tick received from native metronome
-  void _onTickReceived(int tick) {
-    _updateState(_currentState.copyWith(
-      currentTick: tick,
-      lastUpdated: DateTime.now(),
-    ));
-    
-    _tickController.add(tick);
-    debugPrint('Native tick: $tick');
-  }
-  
+
+  /// Get current state
+  MetronomeStateModel get currentState => _currentState;
+
+  /// Check if initialized
+  bool get isInitialized => _isInitialized;
+
   /// Update internal state and notify listeners
   void _updateState(MetronomeStateModel newState) {
     _currentState = newState;
     _stateController.add(newState);
   }
-  
+
   /// Dispose resources
   void dispose() {
-    _fallbackTimer?.cancel();
     _metronome.destroy();
-    _audioPlayer.dispose();
     _stateController.close();
     _tickController.close();
   }
