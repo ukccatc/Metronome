@@ -15,8 +15,7 @@ import 'w_time_signature_selector.dart';
 import 'w_beat_subdivision.dart';
 import 'w_accent_selector.dart';
 import '../faq/s_faq.dart';
-import '../../providers/locale_provider.dart';
-import '../../shared_widgets/w_language_selector.dart';
+import '../settings/s_settings.dart';
 
 class MetronomeScreen extends StatefulWidget {
   const MetronomeScreen({super.key});
@@ -66,7 +65,12 @@ class _MetronomeScreenState extends State<MetronomeScreen> {
           ),
           IconButton(
             icon: const Icon(Icons.settings),
-            onPressed: _logic.toggleSettings,
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const SettingsScreen()),
+              );
+            },
             tooltip: l10n.settings,
           ),
         ],
@@ -133,9 +137,6 @@ class _MetronomeScreenState extends State<MetronomeScreen> {
                 ),
 
                 const SizedBox(height: kDefaultPadding),
-
-                // Settings panel (if visible)
-                if (_logic.showSettings) _buildSettingsPanel(),
               ],
             ),
           );
@@ -268,77 +269,5 @@ class _MetronomeScreenState extends State<MetronomeScreen> {
       return accentPattern.accents[beatNumber - 1];
     }
     return false;
-  }
-
-  Widget _buildSettingsPanel() {
-    final l10n = AppLocalizations.of(context)!;
-
-    return Column(
-      children: [
-        // Language selector
-        Consumer<LocaleProvider>(
-          builder: (context, localeProvider, child) {
-            return LanguageSelector(
-              currentLocale: localeProvider.currentLocale,
-              onLocaleChanged: (locale) {
-                localeProvider.setLocale(locale);
-              },
-            );
-          },
-        ),
-        const SizedBox(height: kDefaultSpacing),
-
-        // Volume settings
-        Card(
-          elevation: kDefaultElevation,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(kDefaultBorderRadius),
-          ),
-          child: Padding(
-            padding: const EdgeInsets.all(kDefaultPadding),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  l10n.volume,
-                  style: Theme.of(context).textTheme.titleMedium,
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  l10n.volumeDescription,
-                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                    color: AppColors.textSecondary,
-                  ),
-                ),
-                const SizedBox(height: kDefaultSpacing),
-
-                // Volume control
-                Row(
-                  children: [
-                    Text('${l10n.volume}: '),
-                    Expanded(
-                      child: Slider(
-                        value: _logic.volume,
-                        min: 0.0,
-                        max: 1.0,
-                        divisions: 100,
-                        onChanged: _logic.updateVolume,
-                        activeColor: AppColors.primary,
-                      ),
-                    ),
-                    Text('${(_logic.volume * 100).round()}%'),
-                  ],
-                ),
-
-                const SizedBox(height: kDefaultSpacing),
-
-                // Additional settings can be added here
-                Text('More settings coming soon...'),
-              ],
-            ),
-          ),
-        ),
-      ],
-    );
   }
 }

@@ -12,7 +12,6 @@ class MetronomeLogic extends ChangeNotifier {
   final MetronomeProvider _provider;
 
   // UI state
-  bool _showSettings = false;
   bool _showTimeSignatureSelector = false;
   bool _showVolumeSlider = false;
 
@@ -28,7 +27,6 @@ class MetronomeLogic extends ChangeNotifier {
 
   // Getters
   MetronomeProvider get provider => _provider;
-  bool get showSettings => _showSettings;
   bool get showTimeSignatureSelector => _showTimeSignatureSelector;
   bool get showVolumeSlider => _showVolumeSlider;
   bool get isAnimating => _isAnimating;
@@ -102,12 +100,6 @@ class MetronomeLogic extends ChangeNotifier {
   /// Update accent pattern
   void updateAccentPattern(AccentPattern? pattern) {
     _provider.updateAccentPattern(pattern);
-  }
-
-  /// Toggle settings visibility
-  void toggleSettings() {
-    _showSettings = !_showSettings;
-    notifyListeners();
   }
 
   /// Toggle time signature selector
