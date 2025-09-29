@@ -2,6 +2,7 @@
 /// Provides step-by-step instructions for new users
 
 import 'package:flutter/material.dart';
+import '../../l10n/app_localizations.dart';
 import '../../constants/theme.dart';
 import '../../constants/text_styles.dart';
 import '../../constants/constants.dart';
@@ -11,9 +12,11 @@ class FaqScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+
     return Scaffold(
       appBar: AppBar(
-        title: const Text('How to Use Metronom'),
+        title: Text(l10n.howToUse),
         backgroundColor: AppColors.primary,
         foregroundColor: AppColors.textOnPrimary,
         elevation: kDefaultElevation,
@@ -23,24 +26,24 @@ class FaqScreen extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            _buildWelcomeSection(),
+            _buildWelcomeSection(l10n),
             const SizedBox(height: kDefaultSpacing * 2),
-            _buildQuickStartSection(),
+            _buildQuickStartSection(l10n),
             const SizedBox(height: kDefaultSpacing * 2),
-            _buildDetailedInstructionsSection(),
+            _buildDetailedInstructionsSection(l10n),
             const SizedBox(height: kDefaultSpacing * 2),
-            _buildFeaturesSection(),
+            _buildFeaturesSection(l10n),
             const SizedBox(height: kDefaultSpacing * 2),
-            _buildTipsSection(),
+            _buildTipsSection(l10n),
             const SizedBox(height: kDefaultSpacing * 2),
-            _buildTroubleshootingSection(),
+            _buildTroubleshootingSection(l10n),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildWelcomeSection() {
+  Widget _buildWelcomeSection(AppLocalizations l10n) {
     return Card(
       elevation: kDefaultElevation,
       child: Padding(
@@ -49,24 +52,21 @@ class FaqScreen extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'Welcome to Metronom!',
+              l10n.welcomeToMetronom,
               style: AppTextStyles.headlineSmall.copyWith(
                 color: AppColors.primary,
                 fontWeight: FontWeight.bold,
               ),
             ),
             const SizedBox(height: kDefaultSpacing),
-            Text(
-              'Metronom is a professional metronome app designed for musicians of all levels. This guide will help you get started quickly and make the most of all features.',
-              style: AppTextStyles.bodyMedium,
-            ),
+            Text(l10n.welcomeDescription, style: AppTextStyles.bodyMedium),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildQuickStartSection() {
+  Widget _buildQuickStartSection(AppLocalizations l10n) {
     return Card(
       elevation: kDefaultElevation,
       child: Padding(
@@ -75,7 +75,7 @@ class FaqScreen extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'Quick Start (30 seconds)',
+              l10n.quickStart,
               style: AppTextStyles.headlineSmall.copyWith(
                 color: AppColors.primary,
                 fontWeight: FontWeight.bold,
@@ -84,27 +84,23 @@ class FaqScreen extends StatelessWidget {
             const SizedBox(height: kDefaultSpacing),
             _buildStepItem(
               step: '1',
-              title: 'Look at the Beat Indicator',
-              description:
-                  'The row of circles at the top shows which beat you\'re on. The highlighted circle is the current beat.',
+              title: l10n.step1,
+              description: l10n.step1Description,
             ),
             _buildStepItem(
               step: '2',
-              title: 'Press the Play Button',
-              description:
-                  'Tap the play button (▶️) to start the metronome. You\'ll hear clicks and see the beat indicator move.',
+              title: l10n.step2,
+              description: l10n.step2Description,
             ),
             _buildStepItem(
               step: '3',
-              title: 'Adjust the Tempo',
-              description:
-                  'Use the +/- buttons next to the BPM number to make it faster or slower. BPM means "beats per minute".',
+              title: l10n.step3,
+              description: l10n.step3Description,
             ),
             _buildStepItem(
               step: '4',
-              title: 'Start Practicing!',
-              description:
-                  'Play along with the metronome. The visual indicator helps you stay in time.',
+              title: l10n.step4,
+              description: l10n.step4Description,
             ),
           ],
         ),
@@ -112,7 +108,7 @@ class FaqScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildDetailedInstructionsSection() {
+  Widget _buildDetailedInstructionsSection(AppLocalizations l10n) {
     return Card(
       elevation: kDefaultElevation,
       child: Padding(
@@ -121,7 +117,7 @@ class FaqScreen extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'Detailed Instructions',
+              l10n.detailedInstructions,
               style: AppTextStyles.headlineSmall.copyWith(
                 color: AppColors.primary,
                 fontWeight: FontWeight.bold,
@@ -169,7 +165,7 @@ class FaqScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildFeaturesSection() {
+  Widget _buildFeaturesSection(AppLocalizations l10n) {
     return Card(
       elevation: kDefaultElevation,
       child: Padding(
@@ -225,7 +221,7 @@ class FaqScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildTipsSection() {
+  Widget _buildTipsSection(AppLocalizations l10n) {
     return Card(
       elevation: kDefaultElevation,
       child: Padding(
@@ -272,7 +268,7 @@ class FaqScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildTroubleshootingSection() {
+  Widget _buildTroubleshootingSection(AppLocalizations l10n) {
     return Card(
       elevation: kDefaultElevation,
       child: Padding(

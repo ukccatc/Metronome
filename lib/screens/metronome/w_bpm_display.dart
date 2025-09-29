@@ -2,6 +2,7 @@
 /// This widget shows the current BPM with controls
 
 import 'package:flutter/material.dart';
+import '../../l10n/app_localizations.dart';
 import '../../constants/theme.dart';
 import '../../constants/text_styles.dart';
 import '../../constants/constants.dart';
@@ -20,6 +21,8 @@ class BpmDisplay extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+
     return Card(
       elevation: kDefaultElevation,
       shape: RoundedRectangleBorder(
@@ -29,13 +32,10 @@ class BpmDisplay extends StatelessWidget {
         padding: const EdgeInsets.all(kDefaultPadding),
         child: Column(
           children: [
-            Text(
-              'BPM (Beats Per Minute)',
-              style: AppTextStyles.titleMedium,
-            ),
+            Text(l10n.bpm, style: AppTextStyles.titleMedium),
             const SizedBox(height: 4),
             Text(
-              'Set the tempo. Higher numbers = faster tempo. Use +/- buttons or tap the number to edit.',
+              l10n.bpmDescription,
               style: AppTextStyles.bodySmall.copyWith(
                 color: AppColors.textSecondary,
               ),

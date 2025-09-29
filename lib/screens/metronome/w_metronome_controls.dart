@@ -2,6 +2,7 @@
 /// This widget contains the main metronome control buttons
 
 import 'package:flutter/material.dart';
+import '../../l10n/app_localizations.dart';
 import '../../constants/theme.dart';
 import '../../constants/text_styles.dart';
 import '../../constants/constants.dart';
@@ -24,6 +25,8 @@ class MetronomeControls extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+
     return Card(
       elevation: kDefaultElevation,
       shape: RoundedRectangleBorder(
@@ -33,13 +36,10 @@ class MetronomeControls extends StatelessWidget {
         padding: const EdgeInsets.all(kDefaultPadding),
         child: Column(
           children: [
-            Text(
-              'Metronome Controls',
-              style: AppTextStyles.titleMedium,
-            ),
+            Text(l10n.metronomeControls, style: AppTextStyles.titleMedium),
             const SizedBox(height: 4),
             Text(
-              'Play/Pause to start or stop the metronome. Stop button resets to beat 1.',
+              l10n.metronomeControlsDescription,
               style: AppTextStyles.bodySmall.copyWith(
                 color: AppColors.textSecondary,
               ),

@@ -3,6 +3,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import '../../l10n/app_localizations.dart';
 import '../../providers/metronome_provider.dart';
 import '../../constants/theme.dart';
 import '../../constants/text_styles.dart';
@@ -14,6 +15,8 @@ import 'w_time_signature_selector.dart';
 import 'w_beat_subdivision.dart';
 import 'w_accent_selector.dart';
 import '../faq/s_faq.dart';
+import '../../providers/locale_provider.dart';
+import '../../shared_widgets/w_language_selector.dart';
 
 class MetronomeScreen extends StatefulWidget {
   const MetronomeScreen({super.key});
@@ -43,9 +46,11 @@ class _MetronomeScreenState extends State<MetronomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Metronome'),
+        title: Text(l10n.appTitle),
         backgroundColor: AppColors.primary,
         foregroundColor: AppColors.textOnPrimary,
         actions: [
@@ -54,17 +59,15 @@ class _MetronomeScreenState extends State<MetronomeScreen> {
             onPressed: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(
-                  builder: (context) => const FaqScreen(),
-                ),
+                MaterialPageRoute(builder: (context) => const FaqScreen()),
               );
             },
-            tooltip: 'How to Use',
+            tooltip: l10n.howToUse,
           ),
           IconButton(
             icon: const Icon(Icons.settings),
             onPressed: _logic.toggleSettings,
-            tooltip: 'Settings',
+            tooltip: l10n.settings,
           ),
         ],
       ),
@@ -268,51 +271,74 @@ class _MetronomeScreenState extends State<MetronomeScreen> {
   }
 
   Widget _buildSettingsPanel() {
-    return Card(
-      elevation: kDefaultElevation,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(kDefaultBorderRadius),
-      ),
-      child: Padding(
-        padding: const EdgeInsets.all(kDefaultPadding),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text('Settings', style: Theme.of(context).textTheme.titleMedium),
-            const SizedBox(height: 4),
-            Text(
-              'Adjust the volume of the metronome. Higher values make the clicks louder.',
-              style: Theme.of(
-                context,
-              ).textTheme.bodySmall?.copyWith(color: AppColors.textSecondary),
-            ),
-            const SizedBox(height: kDefaultSpacing),
+    final l10n = AppLocalizations.of(context)!;
 
-            // Volume control
-            Row(
+    return Column(
+      children: [
+        // Language selector
+        Consumer<LocaleProvider>(
+          builder: (context, localeProvider, child) {
+            return LanguageSelector(
+              currentLocale: localeProvider.currentLocale,
+              onLocaleChanged: (locale) {
+                localeProvider.setLocale(locale);
+              },
+            );
+          },
+        ),
+        const SizedBox(height: kDefaultSpacing),
+
+        // Volume settings
+        Card(
+          elevation: kDefaultElevation,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(kDefaultBorderRadius),
+          ),
+          child: Padding(
+            padding: const EdgeInsets.all(kDefaultPadding),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text('Volume: '),
-                Expanded(
-                  child: Slider(
-                    value: _logic.volume,
-                    min: 0.0,
-                    max: 1.0,
-                    divisions: 100,
-                    onChanged: _logic.updateVolume,
-                    activeColor: AppColors.primary,
+                Text(
+                  l10n.volume,
+                  style: Theme.of(context).textTheme.titleMedium,
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  l10n.volumeDescription,
+                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                    color: AppColors.textSecondary,
                   ),
                 ),
-                Text('${(_logic.volume * 100).round()}%'),
+                const SizedBox(height: kDefaultSpacing),
+
+                // Volume control
+                Row(
+                  children: [
+                    Text('${l10n.volume}: '),
+                    Expanded(
+                      child: Slider(
+                        value: _logic.volume,
+                        min: 0.0,
+                        max: 1.0,
+                        divisions: 100,
+                        onChanged: _logic.updateVolume,
+                        activeColor: AppColors.primary,
+                      ),
+                    ),
+                    Text('${(_logic.volume * 100).round()}%'),
+                  ],
+                ),
+
+                const SizedBox(height: kDefaultSpacing),
+
+                // Additional settings can be added here
+                Text('More settings coming soon...'),
               ],
             ),
-
-            const SizedBox(height: kDefaultSpacing),
-
-            // Additional settings can be added here
-            const Text('More settings coming soon...'),
-          ],
+          ),
         ),
-      ),
+      ],
     );
   }
 }

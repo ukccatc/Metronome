@@ -1,0 +1,327 @@
+{
+  "@@locale": "en",
+  "appTitle": "Metronome",
+  "@appTitle": {
+    "description": "The title of the application"
+  },
+  
+  "howToUse": "How to Use",
+  "@howToUse": {
+    "description": "Title for the FAQ/help screen"
+  },
+  
+  "settings": "Settings",
+  "@settings": {
+    "description": "Settings button and screen title"
+  },
+  
+  "play": "Play",
+  "@play": {
+    "description": "Play button text"
+  },
+  
+  "pause": "Pause",
+  "@pause": {
+    "description": "Pause button text"
+  },
+  
+  "stop": "Stop",
+  "@stop": {
+    "description": "Stop button text"
+  },
+  
+  "bpm": "BPM",
+  "@bpm": {
+    "description": "Beats per minute label"
+  },
+  
+  "bpmDescription": "Set the tempo. Higher numbers = faster tempo. Use +/- buttons or tap the number to edit.",
+  "@bpmDescription": {
+    "description": "Description for BPM control"
+  },
+  
+  "timeSignature": "Time Signature",
+  "@timeSignature": {
+    "description": "Time signature label"
+  },
+  
+  "timeSignatureDescription": "Set how many beats per measure. 4/4 (Common) is most popular, 3/4 (Waltz) for dancing, 2/4 (March) for marching music.",
+  "@timeSignatureDescription": {
+    "description": "Description for time signature control"
+  },
+  
+  "beatSubdivision": "Beat Subdivision",
+  "@beatSubdivision": {
+    "description": "Beat subdivision label"
+  },
+  
+  "beatSubdivisionDescription": "Choose how the beats are divided. Quarter (1/4) is standard, Eighth (1/8) plays twice as fast, Triplet (1/3) creates swing feel, Sixteenth (1/16) is very fast.",
+  "@beatSubdivisionDescription": {
+    "description": "Description for beat subdivision control"
+  },
+  
+  "accentPattern": "Accent Pattern",
+  "@accentPattern": {
+    "description": "Accent pattern label"
+  },
+  
+  "accentPatternDescription": "Choose which beats are emphasized. Accented beats play louder and help you feel the rhythm structure.",
+  "@accentPatternDescription": {
+    "description": "Description for accent pattern control"
+  },
+  
+  "metronomeControls": "Metronome Controls",
+  "@metronomeControls": {
+    "description": "Metronome controls section title"
+  },
+  
+  "metronomeControlsDescription": "Play/Pause to start or stop the metronome. Stop button resets to beat 1.",
+  "@metronomeControlsDescription": {
+    "description": "Description for metronome controls"
+  },
+  
+  "volume": "Volume",
+  "@volume": {
+    "description": "Volume control label"
+  },
+  
+  "volumeDescription": "Adjust the volume of the metronome. Higher values make the clicks louder.",
+  "@volumeDescription": {
+    "description": "Description for volume control"
+  },
+  
+  "beatIndicator": "Beat Indicator",
+  "@beatIndicator": {
+    "description": "Beat indicator section title"
+  },
+  
+  "beatIndicatorDescription": "Shows which beat you're currently on. The highlighted circle is the current beat.",
+  "@beatIndicatorDescription": {
+    "description": "Description for beat indicator"
+  },
+  
+  "quarter": "Quarter",
+  "@quarter": {
+    "description": "Quarter note subdivision"
+  },
+  
+  "eighth": "Eighth",
+  "@eighth": {
+    "description": "Eighth note subdivision"
+  },
+  
+  "triplet": "Triplet",
+  "@triplet": {
+    "description": "Triplet subdivision"
+  },
+  
+  "sixteenth": "Sixteenth",
+  "@sixteenth": {
+    "description": "Sixteenth note subdivision"
+  },
+  
+  "common": "Common",
+  "@common": {
+    "description": "Common time signature name"
+  },
+  
+  "waltz": "Waltz",
+  "@waltz": {
+    "description": "Waltz time signature name"
+  },
+  
+  "march": "March",
+  "@march": {
+    "description": "March time signature name"
+  },
+  
+  "quintuple": "Quintuple",
+  "@quintuple": {
+    "description": "Quintuple time signature name"
+  },
+  
+  "none": "None",
+  "@none": {
+    "description": "No accent pattern"
+  },
+  
+  "firstBeat": "First Beat",
+  "@firstBeat": {
+    "description": "First beat accent pattern"
+  },
+  
+  "strongWeak": "Strong-Weak",
+  "@strongWeak": {
+    "description": "Strong-weak accent pattern"
+  },
+  
+  "custom": "Custom",
+  "@custom": {
+    "description": "Custom accent pattern"
+  },
+  
+  "welcomeToMetronom": "Welcome to Metronom!",
+  "@welcomeToMetronom": {
+    "description": "Welcome message in FAQ"
+  },
+  
+  "welcomeDescription": "Metronom is a professional metronome app designed for musicians of all levels. This guide will help you get started quickly and make the most of all features.",
+  "@welcomeDescription": {
+    "description": "Welcome description in FAQ"
+  },
+  
+  "quickStart": "Quick Start (30 seconds)",
+  "@quickStart": {
+    "description": "Quick start section title"
+  },
+  
+  "step1": "Look at the Beat Indicator",
+  "@step1": {
+    "description": "Quick start step 1"
+  },
+  
+  "step1Description": "The row of circles at the top shows which beat you're on. The highlighted circle is the current beat.",
+  "@step1Description": {
+    "description": "Quick start step 1 description"
+  },
+  
+  "step2": "Press the Play Button",
+  "@step2": {
+    "description": "Quick start step 2"
+  },
+  
+  "step2Description": "Tap the play button (▶️) to start the metronome. You'll hear clicks and see the beat indicator move.",
+  "@step2Description": {
+    "description": "Quick start step 2 description"
+  },
+  
+  "step3": "Adjust the Tempo",
+  "@step3": {
+    "description": "Quick start step 3"
+  },
+  
+  "step3Description": "Use the +/- buttons next to the BPM number to make it faster or slower. BPM means \"beats per minute\".",
+  "@step3Description": {
+    "description": "Quick start step 3 description"
+  },
+  
+  "step4": "Start Practicing!",
+  "@step4": {
+    "description": "Quick start step 4"
+  },
+  
+  "step4Description": "Play along with the metronome. The visual indicator helps you stay in time.",
+  "@step4Description": {
+    "description": "Quick start step 4 description"
+  },
+  
+  "detailedInstructions": "Detailed Instructions",
+  "@detailedInstructions": {
+    "description": "Detailed instructions section title"
+  },
+  
+  "allFeaturesExplained": "All Features Explained",
+  "@allFeaturesExplained": {
+    "description": "All features explained section title"
+  },
+  
+  "proTips": "Pro Tips",
+  "@proTips": {
+    "description": "Pro tips section title"
+  },
+  
+  "troubleshooting": "Troubleshooting",
+  "@troubleshooting": {
+    "description": "Troubleshooting section title"
+  },
+  
+  "startSlow": "Start Slow",
+  "@startSlow": {
+    "description": "Pro tip: start slow"
+  },
+  
+  "startSlowDescription": "Begin with a slow tempo (60-80 BPM) and gradually increase speed as you improve.",
+  "@startSlowDescription": {
+    "description": "Pro tip: start slow description"
+  },
+  
+  "useVisualCues": "Use Visual Cues",
+  "@useVisualCues": {
+    "description": "Pro tip: use visual cues"
+  },
+  
+  "useVisualCuesDescription": "Watch the beat indicator to help you stay in time, especially when learning new pieces.",
+  "@useVisualCuesDescription": {
+    "description": "Pro tip: use visual cues description"
+  },
+  
+  "practiceSubdivisions": "Practice Subdivisions",
+  "@practiceSubdivisions": {
+    "description": "Pro tip: practice subdivisions"
+  },
+  
+  "practiceSubdivisionsDescription": "Use eighth or sixteenth notes to practice complex rhythms and improve timing.",
+  "@practiceSubdivisionsDescription": {
+    "description": "Pro tip: practice subdivisions description"
+  },
+  
+  "feelTheAccents": "Feel the Accents",
+  "@feelTheAccents": {
+    "description": "Pro tip: feel the accents"
+  },
+  
+  "feelTheAccentsDescription": "Use accent patterns to understand the musical structure and feel of different time signatures.",
+  "@feelTheAccentsDescription": {
+    "description": "Pro tip: feel the accents description"
+  },
+  
+  "adjustVolume": "Adjust Volume",
+  "@adjustVolume": {
+    "description": "Pro tip: adjust volume"
+  },
+  
+  "adjustVolumeDescription": "Set volume so you can hear the metronome clearly without it overpowering your instrument.",
+  "@adjustVolumeDescription": {
+    "description": "Pro tip: adjust volume description"
+  },
+  
+  "noSound": "No Sound",
+  "@noSound": {
+    "description": "Troubleshooting: no sound"
+  },
+  
+  "noSoundSolution": "Check your device volume and the app's volume setting. Make sure your device isn't on silent mode.",
+  "@noSoundSolution": {
+    "description": "Troubleshooting: no sound solution"
+  },
+  
+  "metronomeWontStart": "Metronome Won't Start",
+  "@metronomeWontStart": {
+    "description": "Troubleshooting: metronome won't start"
+  },
+  
+  "metronomeWontStartSolution": "Try stopping and starting again. Make sure you have a valid BPM setting (40-200).",
+  "@metronomeWontStartSolution": {
+    "description": "Troubleshooting: metronome won't start solution"
+  },
+  
+  "visualIndicatorNotMoving": "Visual Indicator Not Moving",
+  "@visualIndicatorNotMoving": {
+    "description": "Troubleshooting: visual indicator not moving"
+  },
+  
+  "visualIndicatorNotMovingSolution": "The visual indicator only moves when the metronome is playing. Press the play button to start.",
+  "@visualIndicatorNotMovingSolution": {
+    "description": "Troubleshooting: visual indicator not moving solution"
+  },
+  
+  "appFeelsSlow": "App Feels Slow",
+  "@appFeelsSlow": {
+    "description": "Troubleshooting: app feels slow"
+  },
+  
+  "appFeelsSlowSolution": "Close other apps to free up memory. The metronome needs precise timing to work properly.",
+  "@appFeelsSlowSolution": {
+    "description": "Troubleshooting: app feels slow solution"
+  }
+}

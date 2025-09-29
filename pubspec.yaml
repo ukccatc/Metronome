@@ -11,11 +11,14 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  flutter_localizations:
+    sdk: flutter
   metronome: ^2.0.6
   audioplayers: ^5.2.1
   cupertino_icons: ^1.0.2
   provider: ^6.1.1
   json_annotation: ^4.8.1
+  shared_preferences: ^2.2.2
 
 dev_dependencies:
   flutter_test:
@@ -29,3 +32,5 @@ flutter:
   
   assets:
     - assets/audio/
+  
+  generate: true
