@@ -192,185 +192,191 @@ class _MetronomScreenState extends State<MetronomScreen> {
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            // BPM Display
-            Container(
-              width: double.infinity,
-              padding: const EdgeInsets.all(20),
-              decoration: BoxDecoration(
-                color: Theme.of(context).colorScheme.primaryContainer,
-                borderRadius: BorderRadius.circular(16),
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              // BPM Display
+              Container(
+                width: double.infinity,
+                padding: const EdgeInsets.all(20),
+                decoration: BoxDecoration(
+                  color: Theme.of(context).colorScheme.primaryContainer,
+                  borderRadius: BorderRadius.circular(16),
+                ),
+                child: Column(
+                  children: [
+                    Text('BPM', style: Theme.of(context).textTheme.titleMedium),
+                    Text(
+                      '$_bpm',
+                      style: Theme.of(context).textTheme.displayLarge?.copyWith(
+                            fontWeight: FontWeight.bold,
+                            color: Theme.of(context).colorScheme.primary,
+                          ),
+                    ),
+                  ],
+                ),
               ),
-              child: Column(
+
+              const SizedBox(height: 32),
+
+              // Time Signature Display
+              Container(
+                width: double.infinity,
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: Theme.of(context).colorScheme.secondaryContainer,
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Column(
+                  children: [
+                    Text(
+                      'Time Signature',
+                      style: Theme.of(context).textTheme.titleMedium,
+                    ),
+                    Text(
+                      '$_timeSignature/4',
+                      style:
+                          Theme.of(context).textTheme.headlineMedium?.copyWith(
+                                fontWeight: FontWeight.bold,
+                              ),
+                    ),
+                  ],
+                ),
+              ),
+
+              const SizedBox(height: 32),
+
+              // Current Beat Indicator
+              if (_isPlaying)
+                Container(
+                  width: 100,
+                  height: 100,
+                  decoration: BoxDecoration(
+                    color: _currentTick == 1
+                        ? Theme.of(context).colorScheme.primary
+                        : Theme.of(context).colorScheme.surface,
+                    shape: BoxShape.circle,
+                    border: Border.all(
+                      color: Theme.of(context).colorScheme.outline,
+                      width: 2,
+                    ),
+                  ),
+                  child: Center(
+                    child: Text(
+                      '$_currentTick',
+                      style:
+                          Theme.of(context).textTheme.headlineLarge?.copyWith(
+                                fontWeight: FontWeight.bold,
+                                color: _currentTick == 1
+                                    ? Theme.of(context).colorScheme.onPrimary
+                                    : Theme.of(context).colorScheme.onSurface,
+                              ),
+                    ),
+                  ),
+                ),
+
+              const SizedBox(height: 32),
+
+              // Control Buttons
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
-                  Text('BPM', style: Theme.of(context).textTheme.titleMedium),
-                  Text(
-                    '$_bpm',
-                    style: Theme.of(context).textTheme.displayLarge?.copyWith(
-                          fontWeight: FontWeight.bold,
-                          color: Theme.of(context).colorScheme.primary,
-                        ),
+                  // Play/Pause Button
+                  ElevatedButton.icon(
+                    onPressed: _isInitialized ? _togglePlayPause : null,
+                    icon: Icon(_isPlaying ? Icons.pause : Icons.play_arrow),
+                    label: Text(_isPlaying ? 'Pause' : 'Play'),
+                    style: ElevatedButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 24,
+                        vertical: 12,
+                      ),
+                    ),
+                  ),
+
+                  // Stop Button
+                  ElevatedButton.icon(
+                    onPressed: _isInitialized && _isPlaying ? _stop : null,
+                    icon: const Icon(Icons.stop),
+                    label: const Text('Stop'),
+                    style: ElevatedButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 24,
+                        vertical: 12,
+                      ),
+                    ),
                   ),
                 ],
               ),
-            ),
 
-            const SizedBox(height: 32),
+              const SizedBox(height: 32),
 
-            // Time Signature Display
-            Container(
-              width: double.infinity,
-              padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                color: Theme.of(context).colorScheme.secondaryContainer,
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: Column(
+              // BPM Slider
+              Column(
                 children: [
                   Text(
-                    'Time Signature',
+                    'BPM: $_bpm',
                     style: Theme.of(context).textTheme.titleMedium,
                   ),
-                  Text(
-                    '$_timeSignature/4',
-                    style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                          fontWeight: FontWeight.bold,
-                        ),
+                  Slider(
+                    value: _bpm.toDouble(),
+                    min: 40,
+                    max: 200,
+                    divisions: 160,
+                    onChanged: _setBPM,
                   ),
                 ],
               ),
-            ),
 
-            const SizedBox(height: 32),
+              const SizedBox(height: 16),
 
-            // Current Beat Indicator
-            if (_isPlaying)
-              Container(
-                width: 100,
-                height: 100,
-                decoration: BoxDecoration(
-                  color: _currentTick == 1
-                      ? Theme.of(context).colorScheme.primary
-                      : Theme.of(context).colorScheme.surface,
-                  shape: BoxShape.circle,
-                  border: Border.all(
-                    color: Theme.of(context).colorScheme.outline,
-                    width: 2,
+              // Volume Slider
+              Column(
+                children: [
+                  Text(
+                    'Volume: ${_volume.round()}%',
+                    style: Theme.of(context).textTheme.titleMedium,
                   ),
-                ),
-                child: Center(
-                  child: Text(
-                    '$_currentTick',
-                    style: Theme.of(context).textTheme.headlineLarge?.copyWith(
-                          fontWeight: FontWeight.bold,
-                          color: _currentTick == 1
-                              ? Theme.of(context).colorScheme.onPrimary
-                              : Theme.of(context).colorScheme.onSurface,
-                        ),
+                  Slider(
+                    value: _volume,
+                    min: 0,
+                    max: 100,
+                    divisions: 100,
+                    onChanged: _setVolume,
                   ),
-                ),
+                ],
               ),
 
-            const SizedBox(height: 32),
+              const SizedBox(height: 16),
 
-            // Control Buttons
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                // Play/Pause Button
-                ElevatedButton.icon(
-                  onPressed: _isInitialized ? _togglePlayPause : null,
-                  icon: Icon(_isPlaying ? Icons.pause : Icons.play_arrow),
-                  label: Text(_isPlaying ? 'Pause' : 'Play'),
-                  style: ElevatedButton.styleFrom(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 24,
-                      vertical: 12,
-                    ),
+              // Time Signature Selector
+              Column(
+                children: [
+                  Text(
+                    'Time Signature: $_timeSignature/4',
+                    style: Theme.of(context).textTheme.titleMedium,
                   ),
-                ),
-
-                // Stop Button
-                ElevatedButton.icon(
-                  onPressed: _isInitialized && _isPlaying ? _stop : null,
-                  icon: const Icon(Icons.stop),
-                  label: const Text('Stop'),
-                  style: ElevatedButton.styleFrom(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 24,
-                      vertical: 12,
-                    ),
+                  Wrap(
+                    spacing: 8.0,
+                    runSpacing: 8.0,
+                    alignment: WrapAlignment.center,
+                    children: [2, 3, 4, 5, 6, 7, 8].map((signature) {
+                      return ChoiceChip(
+                        label: Text('$signature/4'),
+                        selected: _timeSignature == signature,
+                        onSelected: (selected) {
+                          if (selected) {
+                            _setTimeSignature(signature);
+                          }
+                        },
+                      );
+                    }).toList(),
                   ),
-                ),
-              ],
-            ),
-
-            const SizedBox(height: 32),
-
-            // BPM Slider
-            Column(
-              children: [
-                Text(
-                  'BPM: $_bpm',
-                  style: Theme.of(context).textTheme.titleMedium,
-                ),
-                Slider(
-                  value: _bpm.toDouble(),
-                  min: 40,
-                  max: 200,
-                  divisions: 160,
-                  onChanged: _setBPM,
-                ),
-              ],
-            ),
-
-            const SizedBox(height: 16),
-
-            // Volume Slider
-            Column(
-              children: [
-                Text(
-                  'Volume: ${_volume.round()}%',
-                  style: Theme.of(context).textTheme.titleMedium,
-                ),
-                Slider(
-                  value: _volume,
-                  min: 0,
-                  max: 100,
-                  divisions: 100,
-                  onChanged: _setVolume,
-                ),
-              ],
-            ),
-
-            const SizedBox(height: 16),
-
-            // Time Signature Selector
-            Column(
-              children: [
-                Text(
-                  'Time Signature: $_timeSignature/4',
-                  style: Theme.of(context).textTheme.titleMedium,
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [2, 3, 4, 5, 6, 7, 8].map((signature) {
-                    return ChoiceChip(
-                      label: Text('$signature/4'),
-                      selected: _timeSignature == signature,
-                      onSelected: (selected) {
-                        if (selected) {
-                          _setTimeSignature(signature);
-                        }
-                      },
-                    );
-                  }).toList(),
-                ),
-              ],
-            ),
-          ],
+                ],
+              ),
+            ],
+          ),
         ),
       ),
     );

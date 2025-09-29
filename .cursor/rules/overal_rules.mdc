@@ -1,0 +1,603 @@
+---
+alwaysApply: true
+---
+
+# Flutter Project Structure Rules
+
+## Directory Structure
+
+- lib/screens/           — Each screen in its own folder; use s_[screen_name].dart for the main screen, l_[screen_name].dart for logic, w_[widget_name].dart for widgets
+- lib/models/            — All data models, named m_[model_name].dart
+- lib/services/          — API, local storage, notification, and other services
+- lib/providers/         — State management (Provider)
+- lib/proxy_providers/   — Data from CTX
+- lib/shared_widgets/    — Reusable widgets
+- lib/constants/         — Constants and utilities
+- lib/extensions/        — Dart type extensions
+- lib/storage/           — Local storage, preferences, database helpers
+- lib/storage_models/    — Models for ISAR local storage
+- lib/translations/      — Localization files
+- assets/                — All resources (images, audio, fonts, JSON, PDFs)
+
+## Naming Conventions
+
+- m_     — Model
+- s_     — Screen
+- l_     — Logic
+- w_     — Widget
+- db_    — Database helper
+- enum_  — Enum
+- pp_    — Proxy provider
+- e_     — Extension file
+
+## Key Responsibilities by Directory
+
+1. **constants/**
+   - Must be the single source of truth for all constants in the application.
+   - No constants should be defined outside this directory.
+   - Organized into specific files:
+     * `constants.dart`: Global app-wide constants and utilities
+     * `apis.dart`: API endpoints, versions, and configurations
+     * `assets.dart`: Asset paths and references
+     * `theme.dart`: Color schemes and theme definitions
+     * `text_styles.dart`: Typography and text styling
+     * `methods.dart`: Reusable utility methods
+     * `links.dart`: External URLs and deep links
+   - Constants must follow naming conventions:
+     * Global constants: `k` prefix (e.g., `kIsDebug`)
+     * API constants: SCREAMING_SNAKE_CASE
+     * Asset paths: camelCase
+     * Colors: camelCase
+     * Text styles: camelCase
+   - Must not contain business logic or UI components.
+   - All new constants must be added to the appropriate files here.
+
+2. **extensions/**
+   - Only extension methods on existing types.
+   - No business logic classes.
+   - File naming: `e_<type>.dart`.
+   - Must be pure extensions (no state).
+   - Must be documented with examples.
+   - Must be registered in central exports.
+
+3. **helpers/**
+   - Only pure utility functions.
+   - No state management.
+   - No UI components.
+   - File naming: `h_<purpose>.dart`.
+   - Must be stateless.
+   - Must be documented.
+
+4. **l10n/**
+   - Only translation files (.arb).
+   - No hardcoded strings.
+   - All text must use translations.
+   - Must maintain all supported languages.
+   - Must follow key naming conventions.
+   - Must be sorted alphabetically.
+
+5. **mixins/**
+   - Only reusable behavior mixins.
+   - No standalone classes.
+   - File naming: `mix_<purpose>.dart`.
+   - Must be focused on single responsibility.
+   - Must be documented with usage examples.
+
+6. **models/**
+   - Only data models and DTOs.
+   - No UI logic.
+   - No business logic.
+   - File naming: `m_<entity>.dart`.
+   - Must implement proper interfaces.
+   - Must include serialization.
+
+7. **proxy_providers/**
+   - Only state management containers.
+   - No UI components.
+   - File naming: `pp_<feature>.dart`.
+   - Must follow the provider pattern.
+   - Must implement proper state management.
+
+8. **screens/**
+   - Only UI implementations.
+   - Organized by feature.
+   - Clear separation of UI and logic.
+   - File naming:
+     * Screens: `s_<name>.dart`
+     * Logic: `l_<name>.dart`
+     * Widgets: `w_<name>.dart`
+   - Must follow responsive design patterns.
+   - Must use shared widgets when possible.
+
+9. **services/**
+   - Only business logic and external services.
+   - No UI components.
+   - Clear service boundaries.
+   - Must follow dependency injection.
+   - Must be testable.
+   - Must handle errors properly.
+
+10. **shared_widgets/**
+    - Only reusable UI components.
+    - No business logic.
+    - File naming: `w_<component>.dart`.
+    - Must be responsive.
+    - Must follow the design system.
+    - Must be documented with examples.
+
+11. **storage_models/**
+    - Only database entities.
+    - No UI logic.
+    - File naming: `m_<entity>.dart`.
+    - Must include migrations.
+    - Must handle validation.
+    - Must follow schema design rules.
+
+12. **storage/**
+    - Only data persistence logic.
+    - No UI components.
+    - Clear storage strategy.
+    - Must handle offline-first.
+    - Must implement proper sync.
+    - Must include error handling.
+
+## Responsive Design
+
+**Platform-Aware Implementation**
+
+```plaintext
+screen_feature/
+├── screen_feature_mobile/     # Mobile layout
+├── screen_feature_desktop/    # Desktop layout
+└── screen_feature_web/        # Web layout
+```
+
+## State Management
+
+### Provider Pattern
+- Proxy providers must be used for centralized state management, business logic separation, and change notification optimization.
+
+### Logic Classes
+
+```dart
+class ScreenLogic extends ChangeNotifierUpdater {
+  bool isBusy = false;
+  void update() => notifyListeners();
+}
+```
+
+## Responsive Guidelines
+- Use platform-specific directories for major layout differences.
+- Implement responsive widgets for minor adjustments.
+- Share business logic across platforms.
+- Maintain a consistent user experience.
+- Handle orientation changes.
+
+## Anti-Patterns to Avoid
+- Do not create empty folders for "structure".
+- Do not create `l_` files without actual logic.
+- Do not split into platform-specific code prematurely.
+- Do not create widget files for simple components.
+
+## Key Interactions
+
+- The Flutter app communicates with the Dart Frog backend via REST API endpoints (HTTP requests).
+- Authentication, user management, bookmarks, exhibitors, products, and events are managed through backend endpoints.
+- The backend provides JSON responses for all data consumed by the Flutter app.
+- Push notifications are triggered by the backend (via Firebase integration) and received by the Flutter app.
+- The backend handles data validation, authorization, and business logic; the frontend focuses on UI/UX and state management.
+- Offline mode in the Flutter app uses local storage and synchronizes with the backend when online.
+- Any new API endpoints or changes must be documented and reflected in both backend and frontend Memory Bank files.
+
+## Additional Details: Constants Folder and Data Interconnections
+
+### constants/ Folder (Both Frontend and Backend)
+
+- The constants/ directory contains all project-wide constants, API endpoint definitions, HTTP methods, and standard response templates.
+- In the frontend (Flutter), constants are used for API URLs, keys, error messages, UI strings, and configuration values. This ensures consistency and easy updates across the app.
+- In the backend (Dart Frog), constants define API routes, HTTP methods, standard responses, and reusable configuration values for services and middleware.
+- All modules and services must import constants from this folder to avoid hardcoding values and to centralize configuration.
+
+### Data and Database Interconnections
+
+- The frontend uses Provider for state management, ensuring reactive UI updates and a clear separation of business logic from presentation.
+- The frontend stores data locally using Isar (for structured, queryable storage) and SharedPreferences (for simple key-value pairs). Data is synchronized with the backend when online.
+- The backend uses MongoDB as the primary database for persistent storage of users, bookmarks, exhibitors, products, and other entities.
+- Data models in the frontend (lib/models/) are designed to mirror backend storage models (storage_models/ in Dart Frog) to enable seamless serialization, deserialization, and API communication.
+- API endpoints are defined in constants and used by services to fetch, update, and synchronize data between frontend and backend.
+- Any changes in data structure or API endpoints must be reflected in both frontend and backend models and constants, and must be documented in the Memory Bank.
+
+### Technologies and Patterns
+
+- Provider is the standard for state management in the Flutter app.
+- Isar is used for local database storage in the Flutter app.
+- MongoDB is used for persistent storage in the Dart Frog backend.
+- All data flow, synchronization, and state management must follow these patterns for consistency and maintainability.
+
+## Services Overview
+
+### Frontend (Flutter)
+
+- The lib/services/ directory may include a wide variety of service types, each responsible for a specific aspect of app functionality. Typical services include:
+  - **API services** — work with REST API, GraphQL, WebSocket, and similar technologies.
+  - **Local storage services** — manage Isar, SharedPreferences, SQLite, Hive, and other local storage solutions.
+  - **Notification services** — handle push notifications (Firebase) and local notifications.
+  - **Authentication services** — login, registration, OAuth, and social login logic.
+  - **User/session services** — manage user session, token storage, and user profile.
+  - **Analytics services** — integrate with Firebase Analytics, Amplitude, Sentry, and similar tools.
+  - **File/Media services** — upload/download files, work with images, camera, and gallery.
+  - **Location services** — GPS, geolocation, and maps integration.
+  - **Connectivity services** — monitor network status and handle offline mode.
+  - **Sync services** — synchronize data between local storage and backend.
+  - **Payment services** — payment system integrations.
+  - **Settings/Preferences services** — manage user settings and preferences.
+  - **Theme/Appearance services** — manage themes, localization, and languages.
+  - **Deep link/Navigation services** — handle deep links and app navigation.
+  - **Security/Encryption services** — data encryption and secure storage.
+  - **Custom utility services** — any other reusable business logic or integrations.
+- Each service must be placed in lib/services/ with a clear, descriptive name (for example, auth_service.dart, analytics_service.dart, file_upload_service.dart).
+- For large projects, services can be grouped into subfolders (for example, services/notifications/, services/storage/).
+- Services should be as independent and reusable as possible.
+
+## Markdown Documentation Rules
+
+### Mandatory Formatting Standards
+
+All Markdown files in the project must follow these rules to ensure consistency and compliance with linting standards:
+
+#### MD022 - Headers Must Be Surrounded by Blank Lines
+- All headers (`#`, `##`, `###`) must have blank lines before and after
+- No content should immediately follow a header without a blank line
+
+#### MD032 - Lists Must Be Surrounded by Blank Lines
+- All lists (`-`, `*`, `1.`) must have blank lines before and after
+- No content should immediately follow a list without a blank line
+
+### File Coverage
+- All `.md` files in the project
+- README files
+- Documentation files
+- Memory Bank files
+- Configuration guides
+
+### Validation Checklist
+Before committing any Markdown file, verify:
+- [ ] All headers have blank lines before and after
+- [ ] All lists have blank lines before and after
+- [ ] No consecutive headers without content between them
+- [ ] No lists directly following headers without blank lines
+- [ ] Proper indentation for nested lists
+- [ ] Consistent spacing throughout the document
+
+### Examples
+
+**✅ Correct Format:**
+```markdown
+## Section Title
+
+This is content after the header.
+
+**Features:**
+
+- Feature 1
+- Feature 2
+- Feature 3
+
+### Subsection
+
+More content here.
+```
+
+**❌ Incorrect Format:**
+```markdown
+## Section Title
+This is content after the header.
+**Features:**
+- Feature 1
+- Feature 2
+- Feature 3
+### Subsection
+More content here.
+```
+
+### Reference
+For detailed rules and examples, see `docs/markdown_rules.md`# Flutter Project Structure Rules
+
+## Directory Structure
+
+- lib/screens/           — Each screen in its own folder; use s_[screen_name].dart for the main screen, l_[screen_name].dart for logic, w_[widget_name].dart for widgets
+- lib/models/            — All data models, named m_[model_name].dart
+- lib/services/          — API, local storage, notification, and other services
+- lib/providers/         — State management (Provider)
+- lib/proxy_providers/   — Data from CTX
+- lib/shared_widgets/    — Reusable widgets
+- lib/constants/         — Constants and utilities
+- lib/extensions/        — Dart type extensions
+- lib/storage/           — Local storage, preferences, database helpers
+- lib/storage_models/    — Models for ISAR local storage
+- lib/translations/      — Localization files
+- assets/                — All resources (images, audio, fonts, JSON, PDFs)
+
+## Naming Conventions
+
+- m_     — Model
+- s_     — Screen
+- l_     — Logic
+- w_     — Widget
+- db_    — Database helper
+- enum_  — Enum
+- pp_    — Proxy provider
+- e_     — Extension file
+
+## Key Responsibilities by Directory
+
+1. **constants/**
+   - Must be the single source of truth for all constants in the application.
+   - No constants should be defined outside this directory.
+   - Organized into specific files:
+     * `constants.dart`: Global app-wide constants and utilities
+     * `apis.dart`: API endpoints, versions, and configurations
+     * `assets.dart`: Asset paths and references
+     * `theme.dart`: Color schemes and theme definitions
+     * `text_styles.dart`: Typography and text styling
+     * `methods.dart`: Reusable utility methods
+     * `links.dart`: External URLs and deep links
+   - Constants must follow naming conventions:
+     * Global constants: `k` prefix (e.g., `kIsDebug`)
+     * API constants: SCREAMING_SNAKE_CASE
+     * Asset paths: camelCase
+     * Colors: camelCase
+     * Text styles: camelCase
+   - Must not contain business logic or UI components.
+   - All new constants must be added to the appropriate files here.
+
+2. **extensions/**
+   - Only extension methods on existing types.
+   - No business logic classes.
+   - File naming: `e_<type>.dart`.
+   - Must be pure extensions (no state).
+   - Must be documented with examples.
+   - Must be registered in central exports.
+
+3. **helpers/**
+   - Only pure utility functions.
+   - No state management.
+   - No UI components.
+   - File naming: `h_<purpose>.dart`.
+   - Must be stateless.
+   - Must be documented.
+
+4. **l10n/**
+   - Only translation files (.arb).
+   - No hardcoded strings.
+   - All text must use translations.
+   - Must maintain all supported languages.
+   - Must follow key naming conventions.
+   - Must be sorted alphabetically.
+
+5. **mixins/**
+   - Only reusable behavior mixins.
+   - No standalone classes.
+   - File naming: `mix_<purpose>.dart`.
+   - Must be focused on single responsibility.
+   - Must be documented with usage examples.
+
+6. **models/**
+   - Only data models and DTOs.
+   - No UI logic.
+   - No business logic.
+   - File naming: `m_<entity>.dart`.
+   - Must implement proper interfaces.
+   - Must include serialization.
+
+7. **proxy_providers/**
+   - Only state management containers.
+   - No UI components.
+   - File naming: `pp_<feature>.dart`.
+   - Must follow the provider pattern.
+   - Must implement proper state management.
+
+8. **screens/**
+   - Only UI implementations.
+   - Organized by feature.
+   - Clear separation of UI and logic.
+   - File naming:
+     * Screens: `s_<name>.dart`
+     * Logic: `l_<name>.dart`
+     * Widgets: `w_<name>.dart`
+   - Must follow responsive design patterns.
+   - Must use shared widgets when possible.
+
+9. **services/**
+   - Only business logic and external services.
+   - No UI components.
+   - Clear service boundaries.
+   - Must follow dependency injection.
+   - Must be testable.
+   - Must handle errors properly.
+
+10. **shared_widgets/**
+    - Only reusable UI components.
+    - No business logic.
+    - File naming: `w_<component>.dart`.
+    - Must be responsive.
+    - Must follow the design system.
+    - Must be documented with examples.
+
+11. **storage_models/**
+    - Only database entities.
+    - No UI logic.
+    - File naming: `m_<entity>.dart`.
+    - Must include migrations.
+    - Must handle validation.
+    - Must follow schema design rules.
+
+12. **storage/**
+    - Only data persistence logic.
+    - No UI components.
+    - Clear storage strategy.
+    - Must handle offline-first.
+    - Must implement proper sync.
+    - Must include error handling.
+
+## Responsive Design
+
+**Platform-Aware Implementation**
+
+```plaintext
+screen_feature/
+├── screen_feature_mobile/     # Mobile layout
+├── screen_feature_desktop/    # Desktop layout
+└── screen_feature_web/        # Web layout
+```
+
+## State Management
+
+### Provider Pattern
+- Proxy providers must be used for centralized state management, business logic separation, and change notification optimization.
+
+### Logic Classes
+
+```dart
+class ScreenLogic extends ChangeNotifierUpdater {
+  bool isBusy = false;
+  void update() => notifyListeners();
+}
+```
+
+## Responsive Guidelines
+- Use platform-specific directories for major layout differences.
+- Implement responsive widgets for minor adjustments.
+- Share business logic across platforms.
+- Maintain a consistent user experience.
+- Handle orientation changes.
+
+## Anti-Patterns to Avoid
+- Do not create empty folders for "structure".
+- Do not create `l_` files without actual logic.
+- Do not split into platform-specific code prematurely.
+- Do not create widget files for simple components.
+
+## Key Interactions
+
+- The Flutter app communicates with the Dart Frog backend via REST API endpoints (HTTP requests).
+- Authentication, user management, bookmarks, exhibitors, products, and events are managed through backend endpoints.
+- The backend provides JSON responses for all data consumed by the Flutter app.
+- Push notifications are triggered by the backend (via Firebase integration) and received by the Flutter app.
+- The backend handles data validation, authorization, and business logic; the frontend focuses on UI/UX and state management.
+- Offline mode in the Flutter app uses local storage and synchronizes with the backend when online.
+- Any new API endpoints or changes must be documented and reflected in both backend and frontend Memory Bank files.
+
+## Additional Details: Constants Folder and Data Interconnections
+
+### constants/ Folder (Both Frontend and Backend)
+
+- The constants/ directory contains all project-wide constants, API endpoint definitions, HTTP methods, and standard response templates.
+- In the frontend (Flutter), constants are used for API URLs, keys, error messages, UI strings, and configuration values. This ensures consistency and easy updates across the app.
+- In the backend (Dart Frog), constants define API routes, HTTP methods, standard responses, and reusable configuration values for services and middleware.
+- All modules and services must import constants from this folder to avoid hardcoding values and to centralize configuration.
+
+### Data and Database Interconnections
+
+- The frontend uses Provider for state management, ensuring reactive UI updates and a clear separation of business logic from presentation.
+- The frontend stores data locally using Isar (for structured, queryable storage) and SharedPreferences (for simple key-value pairs). Data is synchronized with the backend when online.
+- The backend uses MongoDB as the primary database for persistent storage of users, bookmarks, exhibitors, products, and other entities.
+- Data models in the frontend (lib/models/) are designed to mirror backend storage models (storage_models/ in Dart Frog) to enable seamless serialization, deserialization, and API communication.
+- API endpoints are defined in constants and used by services to fetch, update, and synchronize data between frontend and backend.
+- Any changes in data structure or API endpoints must be reflected in both frontend and backend models and constants, and must be documented in the Memory Bank.
+
+### Technologies and Patterns
+
+- Provider is the standard for state management in the Flutter app.
+- Isar is used for local database storage in the Flutter app.
+- MongoDB is used for persistent storage in the Dart Frog backend.
+- All data flow, synchronization, and state management must follow these patterns for consistency and maintainability.
+
+## Services Overview
+
+### Frontend (Flutter)
+
+- The lib/services/ directory may include a wide variety of service types, each responsible for a specific aspect of app functionality. Typical services include:
+  - **API services** — work with REST API, GraphQL, WebSocket, and similar technologies.
+  - **Local storage services** — manage Isar, SharedPreferences, SQLite, Hive, and other local storage solutions.
+  - **Notification services** — handle push notifications (Firebase) and local notifications.
+  - **Authentication services** — login, registration, OAuth, and social login logic.
+  - **User/session services** — manage user session, token storage, and user profile.
+  - **Analytics services** — integrate with Firebase Analytics, Amplitude, Sentry, and similar tools.
+  - **File/Media services** — upload/download files, work with images, camera, and gallery.
+  - **Location services** — GPS, geolocation, and maps integration.
+  - **Connectivity services** — monitor network status and handle offline mode.
+  - **Sync services** — synchronize data between local storage and backend.
+  - **Payment services** — payment system integrations.
+  - **Settings/Preferences services** — manage user settings and preferences.
+  - **Theme/Appearance services** — manage themes, localization, and languages.
+  - **Deep link/Navigation services** — handle deep links and app navigation.
+  - **Security/Encryption services** — data encryption and secure storage.
+  - **Custom utility services** — any other reusable business logic or integrations.
+- Each service must be placed in lib/services/ with a clear, descriptive name (for example, auth_service.dart, analytics_service.dart, file_upload_service.dart).
+- For large projects, services can be grouped into subfolders (for example, services/notifications/, services/storage/).
+- Services should be as independent and reusable as possible.
+
+## Markdown Documentation Rules
+
+### Mandatory Formatting Standards
+
+All Markdown files in the project must follow these rules to ensure consistency and compliance with linting standards:
+
+#### MD022 - Headers Must Be Surrounded by Blank Lines
+- All headers (`#`, `##`, `###`) must have blank lines before and after
+- No content should immediately follow a header without a blank line
+
+#### MD032 - Lists Must Be Surrounded by Blank Lines
+- All lists (`-`, `*`, `1.`) must have blank lines before and after
+- No content should immediately follow a list without a blank line
+
+### File Coverage
+- All `.md` files in the project
+- README files
+- Documentation files
+- Memory Bank files
+- Configuration guides
+
+### Validation Checklist
+Before committing any Markdown file, verify:
+- [ ] All headers have blank lines before and after
+- [ ] All lists have blank lines before and after
+- [ ] No consecutive headers without content between them
+- [ ] No lists directly following headers without blank lines
+- [ ] Proper indentation for nested lists
+- [ ] Consistent spacing throughout the document
+
+### Examples
+
+**✅ Correct Format:**
+```markdown
+## Section Title
+
+This is content after the header.
+
+**Features:**
+
+- Feature 1
+- Feature 2
+- Feature 3
+
+### Subsection
+
+More content here.
+```
+
+**❌ Incorrect Format:**
+```markdown
+## Section Title
+This is content after the header.
+**Features:**
+- Feature 1
+- Feature 2
+- Feature 3
+### Subsection
+More content here.
+```
+
+### Reference
+For detailed rules and examples, see `docs/markdown_rules.md`
