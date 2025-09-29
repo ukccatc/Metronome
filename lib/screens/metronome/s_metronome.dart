@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../providers/metronome_provider.dart';
 import '../../constants/theme.dart';
+import '../../constants/text_styles.dart';
 import '../../constants/constants.dart';
 import 'l_metronome.dart';
 import 'w_metronome_controls.dart';
@@ -65,6 +66,22 @@ class _MetronomeScreenState extends State<MetronomeScreen> {
 
                 const SizedBox(height: kDefaultPadding),
 
+                // Beat Indicator (moved to top)
+                _buildTickDisplay(),
+
+                const SizedBox(height: kDefaultPadding),
+
+                // Metronome Controls (moved to top)
+                MetronomeControls(
+                  isPlaying: _logic.isPlaying,
+                  isInitialized: _logic.isInitialized,
+                  onPlayPause: _logic.togglePlayPause,
+                  onStop: _logic.stop,
+                  isLoading: _logic.isLoading,
+                ),
+
+                const SizedBox(height: kDefaultPadding),
+
                 // BPM Display
                 BpmDisplay(
                   bpm: _logic.bpm,
@@ -97,22 +114,6 @@ class _MetronomeScreenState extends State<MetronomeScreen> {
                   onPatternChanged: _logic.updateAccentPattern,
                   isEnabled: !_logic.isLoading,
                 ),
-
-                const SizedBox(height: kDefaultPadding),
-
-                // Metronome Controls
-                MetronomeControls(
-                  isPlaying: _logic.isPlaying,
-                  isInitialized: _logic.isInitialized,
-                  onPlayPause: _logic.togglePlayPause,
-                  onStop: _logic.stop,
-                  isLoading: _logic.isLoading,
-                ),
-
-                const SizedBox(height: kDefaultPadding),
-
-                // Current tick display
-                _buildTickDisplay(),
 
                 const SizedBox(height: kDefaultPadding),
 
@@ -154,43 +155,102 @@ class _MetronomeScreenState extends State<MetronomeScreen> {
   Widget _buildTickDisplay() {
     return Consumer<MetronomeProvider>(
       builder: (context, provider, child) {
-        return AnimatedScale(
-          scale: _logic.animationScale,
-          duration: kFastAnimationDuration,
-          child: Container(
-            width: 100,
-            height: 100,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              color: provider.isPlaying
-                  ? AppColors.metronomeActive
-                  : AppColors.metronomeInactive,
-              boxShadow: [
-                BoxShadow(
-                  color:
-                      (provider.isPlaying
-                              ? AppColors.metronomeActive
-                              : AppColors.metronomeInactive)
-                          .withOpacity(0.3),
-                  blurRadius: 8,
-                  offset: const Offset(0, 4),
+        return Card(
+          elevation: kDefaultElevation,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(kDefaultBorderRadius),
+          ),
+          child: Padding(
+            padding: const EdgeInsets.all(kDefaultPadding),
+            child: Column(
+              children: [
+                Text('Beat Indicator', style: AppTextStyles.titleMedium),
+                const SizedBox(height: 4),
+                Text(
+                  'Current beat in the measure',
+                  style: AppTextStyles.bodySmall.copyWith(
+                    color: AppColors.textSecondary,
+                  ),
                 ),
+                const SizedBox(height: kDefaultSpacing),
+                _buildBeatPallets(provider),
               ],
-            ),
-            child: Center(
-              child: Text(
-                '${provider.currentTick}',
-                style: const TextStyle(
-                  fontSize: 32,
-                  fontWeight: FontWeight.bold,
-                  color: AppColors.textOnPrimary,
-                ),
-              ),
             ),
           ),
         );
       },
     );
+  }
+
+  Widget _buildBeatPallets(MetronomeProvider provider) {
+    final timeSignature = provider.timeSignature;
+    final currentTick = provider.currentTick;
+
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: List.generate(timeSignature, (index) {
+        final beatNumber = index + 1;
+        final isActive = currentTick == beatNumber;
+        final isAccented = _isAccentedBeat(beatNumber, provider);
+
+        return Container(
+          margin: const EdgeInsets.symmetric(horizontal: 4),
+          child: AnimatedContainer(
+            duration: const Duration(milliseconds: 150),
+            width: isActive ? 24 : 20,
+            height: isActive ? 24 : 20,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: isActive
+                  ? (isAccented ? AppColors.accent : AppColors.primary)
+                  : (isAccented
+                        ? AppColors.accent.withOpacity(0.3)
+                        : AppColors.textHint),
+              border: Border.all(
+                color: isActive
+                    ? (isAccented ? AppColors.accent : AppColors.primary)
+                    : AppColors.textHint,
+                width: 2,
+              ),
+              boxShadow: isActive
+                  ? [
+                      BoxShadow(
+                        color:
+                            (isAccented ? AppColors.accent : AppColors.primary)
+                                .withOpacity(0.4),
+                        blurRadius: 8,
+                        offset: const Offset(0, 2),
+                      ),
+                    ]
+                  : null,
+            ),
+            child: Center(
+              child: Text(
+                '$beatNumber',
+                style: TextStyle(
+                  fontSize: isActive ? 12 : 10,
+                  fontWeight: FontWeight.bold,
+                  color: isActive
+                      ? AppColors.textOnPrimary
+                      : AppColors.textSecondary,
+                ),
+              ),
+            ),
+          ),
+        );
+      }),
+    );
+  }
+
+  bool _isAccentedBeat(int beatNumber, MetronomeProvider provider) {
+    final accentPattern = provider.accentPattern;
+    if (accentPattern == null) return false;
+
+    // Check if this beat should be accented
+    if (beatNumber <= accentPattern.accents.length) {
+      return accentPattern.accents[beatNumber - 1];
+    }
+    return false;
   }
 
   Widget _buildSettingsPanel() {
@@ -205,6 +265,13 @@ class _MetronomeScreenState extends State<MetronomeScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text('Settings', style: Theme.of(context).textTheme.titleMedium),
+            const SizedBox(height: 4),
+            Text(
+              'Adjust the volume of the metronome. Higher values make the clicks louder.',
+              style: Theme.of(
+                context,
+              ).textTheme.bodySmall?.copyWith(color: AppColors.textSecondary),
+            ),
             const SizedBox(height: kDefaultSpacing),
 
             // Volume control

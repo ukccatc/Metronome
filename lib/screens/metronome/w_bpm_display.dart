@@ -30,8 +30,13 @@ class BpmDisplay extends StatelessWidget {
         child: Column(
           children: [
             Text(
-              'BPM',
-              style: AppTextStyles.labelLarge.copyWith(
+              'BPM (Beats Per Minute)',
+              style: AppTextStyles.titleMedium,
+            ),
+            const SizedBox(height: 4),
+            Text(
+              'Set the tempo. Higher numbers = faster tempo. Use +/- buttons or tap the number to edit.',
+              style: AppTextStyles.bodySmall.copyWith(
                 color: AppColors.textSecondary,
               ),
             ),

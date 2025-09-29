@@ -3,6 +3,8 @@
 
 import 'package:flutter/material.dart';
 import '../../constants/theme.dart';
+import '../../constants/text_styles.dart';
+import '../../constants/constants.dart';
 
 class MetronomeControls extends StatelessWidget {
   final bool isPlaying;
@@ -22,25 +24,50 @@ class MetronomeControls extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-      children: [
-        // Stop button
-        _buildControlButton(
-          icon: Icons.stop,
-          onPressed: isInitialized ? onStop : null,
-          isActive: false,
-        ),
+    return Card(
+      elevation: kDefaultElevation,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(kDefaultBorderRadius),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(kDefaultPadding),
+        child: Column(
+          children: [
+            Text(
+              'Metronome Controls',
+              style: AppTextStyles.titleMedium,
+            ),
+            const SizedBox(height: 4),
+            Text(
+              'Play/Pause to start or stop the metronome. Stop button resets to beat 1.',
+              style: AppTextStyles.bodySmall.copyWith(
+                color: AppColors.textSecondary,
+              ),
+            ),
+            const SizedBox(height: kDefaultSpacing),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                // Stop button
+                _buildControlButton(
+                  icon: Icons.stop,
+                  onPressed: isInitialized ? onStop : null,
+                  isActive: false,
+                ),
 
-        // Play/Pause button
-        _buildControlButton(
-          icon: isPlaying ? Icons.pause : Icons.play_arrow,
-          onPressed: isInitialized ? onPlayPause : null,
-          isActive: isPlaying,
-          isPrimary: true,
-          isLoading: isLoading,
+                // Play/Pause button
+                _buildControlButton(
+                  icon: isPlaying ? Icons.pause : Icons.play_arrow,
+                  onPressed: isInitialized ? onPlayPause : null,
+                  isActive: isPlaying,
+                  isPrimary: true,
+                  isLoading: isLoading,
+                ),
+              ],
+            ),
+          ],
         ),
-      ],
+      ),
     );
   }
 

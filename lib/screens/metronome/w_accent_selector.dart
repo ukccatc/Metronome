@@ -37,7 +37,12 @@ class AccentSelector extends StatelessWidget {
           children: [
             Text(
               'Accent Pattern',
-              style: AppTextStyles.labelLarge.copyWith(
+              style: AppTextStyles.titleMedium,
+            ),
+            const SizedBox(height: 4),
+            Text(
+              'Choose which beats are emphasized. Accented beats play louder and help you feel the rhythm structure.',
+              style: AppTextStyles.bodySmall.copyWith(
                 color: AppColors.textSecondary,
               ),
             ),

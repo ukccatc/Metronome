@@ -34,7 +34,12 @@ class TimeSignatureSelector extends StatelessWidget {
           children: [
             Text(
               'Time Signature',
-              style: AppTextStyles.labelLarge.copyWith(
+              style: AppTextStyles.titleMedium,
+            ),
+            const SizedBox(height: 4),
+            Text(
+              'Set how many beats per measure. 4/4 (Common) is most popular, 3/4 (Waltz) for dancing, 2/4 (March) for marching music.',
+              style: AppTextStyles.bodySmall.copyWith(
                 color: AppColors.textSecondary,
               ),
             ),
@@ -54,13 +59,26 @@ class TimeSignatureSelector extends StatelessWidget {
 
   Widget _buildSignatureChip(int signature) {
     final isSelected = signature == selectedSignature;
+    final signatureName = _getSignatureName(signature);
 
     return ChoiceChip(
-      label: Text(
-        '$signature/4',
-        style: AppTextStyles.labelMedium.copyWith(
-          color: isSelected ? AppColors.textOnPrimary : AppColors.textPrimary,
-        ),
+      label: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(
+            '$signature/4',
+            style: AppTextStyles.labelMedium.copyWith(
+              color: isSelected ? AppColors.textOnPrimary : AppColors.textPrimary,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          Text(
+            signatureName,
+            style: AppTextStyles.bodySmall.copyWith(
+              color: isSelected ? AppColors.textOnPrimary : AppColors.textSecondary,
+            ),
+          ),
+        ],
       ),
       selected: isSelected,
       onSelected: isEnabled
@@ -83,5 +101,26 @@ class TimeSignatureSelector extends StatelessWidget {
         borderRadius: BorderRadius.circular(kDefaultBorderRadius),
       ),
     );
+  }
+
+  String _getSignatureName(int signature) {
+    switch (signature) {
+      case 2:
+        return 'March';
+      case 3:
+        return 'Waltz';
+      case 4:
+        return 'Common';
+      case 5:
+        return 'Quintuple';
+      case 6:
+        return 'Compound';
+      case 7:
+        return 'Septuple';
+      case 8:
+        return 'Octuple';
+      default:
+        return 'Custom';
+    }
   }
 }
