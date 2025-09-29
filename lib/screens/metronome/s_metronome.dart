@@ -13,6 +13,7 @@ import 'w_bpm_display.dart';
 import 'w_time_signature_selector.dart';
 import 'w_beat_subdivision.dart';
 import 'w_accent_selector.dart';
+import '../faq/s_faq.dart';
 
 class MetronomeScreen extends StatefulWidget {
   const MetronomeScreen({super.key});
@@ -49,8 +50,21 @@ class _MetronomeScreenState extends State<MetronomeScreen> {
         foregroundColor: AppColors.textOnPrimary,
         actions: [
           IconButton(
+            icon: const Icon(Icons.help_outline),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const FaqScreen(),
+                ),
+              );
+            },
+            tooltip: 'How to Use',
+          ),
+          IconButton(
             icon: const Icon(Icons.settings),
             onPressed: _logic.toggleSettings,
+            tooltip: 'Settings',
           ),
         ],
       ),
